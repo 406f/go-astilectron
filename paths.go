@@ -118,10 +118,10 @@ func AstilectronDownloadSrc(versionAstilectron string) string {
 }
 
 // ElectronDownloadSrc returns the download URL of the platform-dependant electron zipfile
-func ElectronDownloadSrc(os, arch, versionElectron string) string {
+func ElectronDownloadSrc(osName, arch, versionElectron string) string {
 	// Get OS name
 	var o string
-	switch strings.ToLower(os) {
+	switch strings.ToLower(osName) {
 	case "darwin":
 		o = "darwin"
 	case "linux":
@@ -139,6 +139,14 @@ func ElectronDownloadSrc(os, arch, versionElectron string) string {
 	} else if strings.ToLower(arch) == "arm64" && o == "linux" {
 		a = "arm64"
 	}
+
+	base := "https://github.com/electron/electron/releases/download"
+
+	if v := os.Getenv("ELECTRON_MIRROR"); len(v) > 0 {
+		base = v
+	}
+	// Return url		// Return url
+	return fmt.Sprintf("%v/v%s/electron-v%s-%s-%s.zip", base, versionElectron, versionElectron, o, a)
 
 	// Return url
 	return fmt.Sprintf("https://github.com/electron/electron/releases/download/v%s/electron-v%s-%s-%s.zip", versionElectron, versionElectron, o, a)
